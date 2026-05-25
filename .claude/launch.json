@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "next",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "dev"],
+      "port": 3017,
+      "autoPort": true
+    },
+    {
+      "name": "next-prod",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "start", "-p", "3018"],
+      "port": 3018,
+      "autoPort": false
+    }
+  ]
+}

@@ -1,26 +1,409 @@
 @import "tailwindcss";
 
+/* ============================================
+   DESIGN TOKENS — AUGUSTO VEGA / Creative Engineer
+   Premium dark editorial system
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core surfaces */
+  --bg: 10 10 11;
+  --bg-elev: 18 18 20;
+  --bg-soft: 26 26 28;
+  --line: 38 38 41;
+  --line-strong: 64 64 68;
+
+  /* Foreground */
+  --fg: 245 244 238;
+  --fg-muted: 168 168 172;
+  --fg-faint: 110 110 115;
+
+  /* Brand accent — electric lime */
+  --accent: 200 255 0;
+  --accent-glow: 200 255 0;
+  --accent-ink: 10 10 11;
+
+  /* Auxiliary */
+  --hot: 255 90 60;
+  --cool: 90 170 255;
+
+  /* Type scale */
+  --step--1: clamp(0.78rem, 0.74rem + 0.18vw, 0.88rem);
+  --step-0: clamp(0.95rem, 0.9rem + 0.22vw, 1.05rem);
+  --step-1: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
+  --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --step-3: clamp(2rem, 1.6rem + 2vw, 3.25rem);
+  --step-4: clamp(2.8rem, 2rem + 4vw, 5.25rem);
+  --step-5: clamp(3.6rem, 2.4rem + 6vw, 7.5rem);
+  --step-6: clamp(4.5rem, 2.8rem + 9vw, 11rem);
+  --step-mega: clamp(6rem, 3rem + 14vw, 18rem);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 14px;
+  --r-lg: 24px;
+  --r-xl: 36px;
+  --r-pill: 999px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: rgb(var(--bg));
+  --color-bg-elev: rgb(var(--bg-elev));
+  --color-bg-soft: rgb(var(--bg-soft));
+  --color-line: rgb(var(--line));
+  --color-line-strong: rgb(var(--line-strong));
+  --color-fg: rgb(var(--fg));
+  --color-fg-muted: rgb(var(--fg-muted));
+  --color-fg-faint: rgb(var(--fg-faint));
+  --color-accent: rgb(var(--accent));
+  --color-accent-ink: rgb(var(--accent-ink));
+  --color-hot: rgb(var(--hot));
+  --color-cool: rgb(var(--cool));
+
+  --font-sans: var(--font-sans-pri), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-serif-display), ui-serif, Georgia, serif;
+  --font-mono: var(--font-mono-pri), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================
+   GLOBAL RESET + BASE
+   ============================================ */
+
+* {
+  border-color: rgb(var(--line));
+}
+
+html {
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: auto;
+  font-feature-settings: "ss01", "cv01", "cv11";
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body { cursor: none; }
+}
+
+::selection {
+  background: rgb(var(--accent));
+  color: rgb(var(--accent-ink));
+}
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ============================================
+   PERFORMANCE — content-visibility & containment
+   ============================================ */
+
+main > section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1200px;
+}
+
+/* Hero must paint immediately (LCP) */
+main > section:first-child,
+main > section#top {
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+}
+
+/* ============================================
+   CUSTOM CURSOR (data-attribute driven, no React state)
+   ============================================ */
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(var(--fg));
+  mix-blend-mode: difference;
+  opacity: 1;
+  transition: background 0.2s ease, opacity 0.2s ease;
+  will-change: transform;
+}
+.cursor-dot[data-hidden="1"] { opacity: 0; }
+.cursor-dot[data-mode="link"],
+.cursor-dot[data-mode="drag"] { background: rgb(var(--accent)); }
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 244, 238, 0.55);
+  mix-blend-mode: difference;
+  opacity: 1;
+  transition:
+    width 0.35s var(--ease-out-expo),
+    height 0.35s var(--ease-out-expo),
+    border-color 0.25s ease,
+    opacity 0.25s ease;
+  will-change: transform;
+}
+.cursor-ring[data-hidden="1"] { opacity: 0; }
+.cursor-ring[data-mode="link"] {
+  width: 56px;
+  height: 56px;
+  border-color: rgb(var(--accent));
+}
+.cursor-ring[data-mode="drag"] {
+  width: 90px;
+  height: 90px;
+  border-color: rgb(var(--accent));
+}
+
+/* ============================================
+   TYPOGRAPHY UTILITIES
+   ============================================ */
+
+.h-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  font-feature-settings: "ss01", "ss02";
+}
+
+.h-display-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+}
+
+.h-sans-tight {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+}
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--fg-muted));
+}
+
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* ============================================
+   COMPONENTS — primitives
+   ============================================ */
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--line-strong)), transparent);
+}
+
+.surface-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: -1px -1px;
+}
+
+.noise-texture {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("/textures/noise.svg");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99;
+  background: radial-gradient(120% 80% at 50% 0%, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes marquee-x {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-x-rev {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent), 0.5); }
+  50% { box-shadow: 0 0 0 12px rgba(var(--accent), 0); }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.marquee-track {
+  animation: marquee-x 35s linear infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.marquee-track-rev {
+  animation: marquee-x-rev 45s linear infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+
+/* ============================================
+   PROSE / TEXT BLOCKS
+   ============================================ */
+
+.text-balance { text-wrap: balance; }
+.text-pretty { text-wrap: pretty; }
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.875rem 1.375rem;
+  border-radius: var(--r-pill);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+  transition: background 0.4s var(--ease-out-expo),
+              color 0.4s var(--ease-out-expo),
+              border-color 0.4s var(--ease-out-expo),
+              transform 0.4s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.btn-pill--solid {
+  background: rgb(var(--accent));
+  color: rgb(var(--accent-ink));
+}
+
+.btn-pill--solid:hover {
+  background: rgb(var(--fg));
+  transform: translateY(-2px);
+}
+
+.btn-pill--ghost {
+  background: transparent;
+  color: rgb(var(--fg));
+  border: 1px solid rgb(var(--line-strong));
+}
+
+.btn-pill--ghost:hover {
+  border-color: rgb(var(--accent));
+  color: rgb(var(--accent));
+}
+
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .btn-pill { cursor: none; }
+}
+
+/* ============================================
+   UTILITY: gradient text
+   ============================================ */
+
+.text-gradient {
+  background: linear-gradient(120deg, rgb(var(--fg)) 0%, rgb(var(--fg-faint)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(100deg, rgb(var(--accent)) 0%, rgb(var(--fg)) 60%, rgb(var(--accent)) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* ============================================
+   REDUCED MOTION + LOW POWER
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-track,
+  .marquee-track-rev,
+  .spin-slow {
+    animation: none !important;
+  }
 }
