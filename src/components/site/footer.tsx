@@ -132,9 +132,12 @@ export function Footer() {
 
         {/* Colophon */}
         <div className="flex flex-col gap-3 border-t border-line/70 py-6 text-[0.78rem] text-fg-muted md:flex-row md:items-center md:justify-between md:gap-6">
-          <span className="font-mono uppercase tracking-[0.16em]">
-            Hecho en Buenos Aires · Alojado en el edge · Pensado para durar más que la tendencia
-          </span>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+            <span className="font-mono uppercase tracking-[0.16em]">
+              Hecho en Buenos Aires · Alojado en el edge · Pensado para durar más que la tendencia
+            </span>
+            <ApexCredit />
+          </div>
           <div className="flex flex-wrap items-center gap-4">
             <span className="font-mono uppercase tracking-[0.16em]">
               Versión · v.06 · {time?.slice(0, 5) || ""}
@@ -150,6 +153,39 @@ export function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+/**
+ * Crédito de autoría del estudio. Backlink dofollow, visible y legible:
+ * micro-tipografía mono al tono del colofón, monograma "A" en SVG inline
+ * (sin recursos externos) y hover que revela el acento de la marca.
+ */
+function ApexCredit() {
+  return (
+    <span className="flex items-center gap-3 md:before:mr-1 md:before:h-3 md:before:w-px md:before:bg-line-strong/70 md:before:content-['']">
+      <a
+        href="https://www.theapexweb.com"
+        target="_blank"
+        rel="noopener"
+        data-cursor="link"
+        aria-label="Creado por APEX — abre theapexweb.com en una pestaña nueva"
+        className="group/apex inline-flex items-center gap-1.5 font-mono uppercase tracking-[0.16em] text-fg-muted transition-colors duration-300 hover:text-fg focus-visible:text-fg focus-visible:outline-none"
+      >
+        <span
+          aria-hidden
+          className="grid h-[1.15rem] w-[1.15rem] place-items-center rounded-[5px] border border-line-strong/80 text-[0.62rem] font-semibold leading-none tracking-normal text-fg-faint transition-colors duration-300 group-hover/apex:border-accent group-hover/apex:text-accent group-focus-visible/apex:border-accent group-focus-visible/apex:text-accent"
+        >
+          A
+        </span>
+        <span>
+          Creado por{" "}
+          <span className="text-fg/90 transition-colors duration-300 group-hover/apex:text-accent group-focus-visible/apex:text-accent">
+            APEX
+          </span>
+        </span>
+      </a>
+    </span>
   );
 }
 
