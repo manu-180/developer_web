@@ -167,7 +167,7 @@ function ApexCredit() {
       <a
         href="https://www.theapexweb.com"
         target="_blank"
-        rel="noopener"
+        rel="noopener nofollow"
         data-cursor="link"
         aria-label="Creado por APEX — abre theapexweb.com en una pestaña nueva"
         className="group/apex inline-flex items-center gap-1.5 font-mono uppercase tracking-[0.16em] text-fg-muted transition-colors duration-300 hover:text-fg focus-visible:text-fg focus-visible:outline-none"
